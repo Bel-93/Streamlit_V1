@@ -19,6 +19,37 @@ fruits_selected = streamlit.multiselect("Pick some fruits:", list(my_fruit_list.
 fruits_to_show = my_fruit_list.loc[fruits_selected]
 streamlit.dataframe(fruits_to_show)
 
+# Datos de ejemplo
+total_encuestas = 1000
+encuestas_completadas = 600
+
+# Calcular el porcentaje de encuestas completadas
+porcentaje_completado = (encuestas_completadas / total_encuestas) * 100
+porcentaje_restante = 100 - porcentaje_completado
+
+# Crear los datos para el gráfico
+sizes = [porcentaje_completado, porcentaje_restante]
+colors = ['#4CAF50', '#E0E0E0']  # Colores para el progreso y el resto
+
+# Crear el gráfico circular
+fig, ax = plt.subplots()
+ax.pie(sizes, colors=colors, startangle=90, counterclock=False, wedgeprops=dict(width=0.3))
+
+# Añadir un círculo blanco en el centro para crear el efecto de anillo
+centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+fig.gca().add_artist(centre_circle)
+
+# Añadir el texto con el porcentaje en el centro del anillo
+ax.text(0, 0, f'{porcentaje_completado:.2f}%', ha='center', va='center', fontsize=20, color='black')
+
+# Configurar el título y otros detalles
+ax.set_title('Progreso de Encuestas Completadas', fontsize=14)
+plt.axis('equal')  # Asegurar que el gráfico sea circular
+
+# Mostrar el gráfico en Streamlit
+st.title('Gráfico de Progreso de Encuestas')
+st.pyplot(fig)
+
 import requests
 from urllib.error import URLError
 try:
