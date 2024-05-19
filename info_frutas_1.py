@@ -12,63 +12,34 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import requests
 from urllib.error import URLError
+import streamlit as st
+import matplotlib.pyplot as plt
+import numpy as np
 
-# Encabezado de la aplicación
-st.header('🍌🥭 Build Your Own Fruit Smoothie 🥝🍇')
+# Datos para los gráficos
+opciones = ["A", "B", "C"]
+valores_a = np.random.randint(1, 10, size=10)
+valores_b = np.random.randint(1, 10, size=10)
+valores_c = np.random.randint(1, 10, size=10)
 
-# Cargar la lista de frutas
-my_fruit_list = pd.read_csv("https://uni-lab-files.s3.us-west-2.amazonaws.com/dabw/fruit_macros.txt")
-st.dataframe(my_fruit_list)
+# Crear el gráfico de barras para cada opción
+def grafico_barras(opcion, valores):
+    fig, ax = plt.subplots()
+    ax.bar(range(len(valores)), valores)
+    ax.set_xticks(range(len(valores)))
+    ax.set_xticklabels([str(i) for i in range(1, len(valores)+1)])
+    ax.set_xlabel("Índice")
+    ax.set_ylabel("Valor")
+    ax.set_title(f"Gráfico de barras para la opción {opcion}")
+    st.pyplot(fig)
 
-# Multiselección de frutas
-fruits_selected = st.multiselect("Pick some fruits:", list(my_fruit_list.index))
-fruits_to_show = my_fruit_list.loc[fruits_selected]
-st.dataframe(fruits_to_show)
+# Preguntar al usuario por la opción
+opcion_seleccionada = st.selectbox("Selecciona una opción:", opciones)
 
-# Datos de ejemplo
-total_encuestas = 1000
-encuestas_completadas = 600
-
-# Calcular el porcentaje de encuestas completadas
-porcentaje_completado = (encuestas_completadas / total_encuestas) * 100
-porcentaje_restante = 100 - porcentaje_completado
-
-# Crear los datos para el gráfico
-sizes = [porcentaje_completado, porcentaje_restante]
-colors = ['#4CAF50', '#E0E0E0']  # Colores para el progreso y el resto
-
-# Crear el gráfico circular
-fig, ax = plt.subplots()
-ax.pie(sizes, colors=colors, startangle=90, counterclock=False, wedgeprops=dict(width=0.3))
-
-# Añadir un círculo blanco en el centro para crear el efecto de anillo
-centre_circle = plt.Circle((0, 0), 0.70, fc='white')
-fig.gca().add_artist(centre_circle)
-
-# Añadir el texto con el porcentaje en el centro del anillo
-ax.text(0, 0, f'{porcentaje_completado:.2f}%', ha='center', va='center', fontsize=20, color='black')
-
-# Configurar el título y otros detalles
-ax.set_title('Progreso de Encuestas Completadas', fontsize=14)
-plt.axis('equal')  # Asegurar que el gráfico sea circular
-
-# Mostrar el gráfico en Streamlit
-st.title('Gráfico de Progreso de Encuestas')
-st.pyplot(fig)
-
-# Obtener información de frutas
-try:
-    fruit_choice = st.text_input('What fruit would you like information about?', 'Kiwi')
-    if not fruit_choice:
-        st.error('Please select a fruit to get information')
-    else:
-        st.write('The user entered ', fruit_choice)
-        url = "https://fruityvice.com/api/fruit/" + fruit_choice
-        fruityvice_response = requests.get(url)
-        fruityvice_response.raise_for_status()  # Check if the request was successful
-        fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
-        st.dataframe(fruityvice_normalized)
-except URLError as e:
-    st.error("Error: " + str(e))
-except requests.exceptions.RequestException as e:
-    st.error("Request Error: " + str(e))
+# Mostrar el gráfico correspondiente a la opción seleccionada
+if opcion_seleccionada == "A":
+    grafico_barras(opcion_seleccionada, valores_a)
+elif opcion_seleccionada == "B":
+    grafico_barras(opcion_seleccionada, valores_b)
+elif opcion_seleccionada == "C":
+    grafico_barras(opcion_seleccionada, valores_c)
