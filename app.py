@@ -16,4 +16,3 @@ df = pd.DataFrame({
 st.write("Gráfico de Dispersión:")
 st.write(df)
 st.write(plt.scatter(df['x'], df['y']))
-    
