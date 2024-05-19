@@ -12,17 +12,6 @@ import matplotlib.pyplot as plt
 import requests
 from urllib.error import URLError
 
-# Encabezado de la aplicación
-st.header('🍌🥭 Build Your Own Fruit Smoothie 🥝🍇')
-
-# Cargar la lista de frutas
-my_fruit_list = pd.read_csv("https://uni-lab-files.s3.us-west-2.amazonaws.com/dabw/fruit_macros.txt")
-st.dataframe(my_fruit_list)
-
-# Multiselección de frutas
-fruits_selected = st.multiselect("Pick some fruits:", list(my_fruit_list.index))
-fruits_to_show = my_fruit_list.loc[fruits_selected]
-st.dataframe(fruits_to_show)
 
 # Datos de ejemplo
 total_encuestas = 1000
@@ -55,20 +44,4 @@ plt.axis('equal')  # Asegurar que el gráfico sea circular
 st.title('Gráfico de Progreso de Encuestas')
 st.pyplot(fig)
 
-# Obtener información de frutas
-try:
-    fruit_choice = st.text_input('What fruit would you like information about?', 'Kiwi')
-    if not fruit_choice:
-        st.error('Please select a fruit to get information')
-    else:
-        st.write('The user entered ', fruit_choice)
-        url = "https://fruityvice.com/api/fruit/" + fruit_choice
-        fruityvice_response = requests.get(url)
-        fruityvice_response.raise_for_status()  # Check if the request was successful
-        fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
-        st.dataframe(fruityvice_normalized)
-except URLError as e:
-    st.error("Error: " + str(e))
-except requests.exceptions.RequestException as e:
-    st.error("Request Error: " + str(e))
 
